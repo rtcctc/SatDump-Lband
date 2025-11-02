@@ -25,7 +25,9 @@ file(GLOB_RECURSE SatDump_core_CPPS *.cpp
 
 find_package(PkgConfig)
 
-add_library(satdump_core SHARED ${SatDump_core_CPPS})
+add_library(satdump_core SHARED ${SatDump_core_CPPS}
+        common/tracking/rotator/rotctl_serial_handler.cpp
+        common/tracking/rotator/rotctl_serial_handler.h)
 target_include_directories(satdump_core PUBLIC .)
 
 # Set the resources path

@@ -104,9 +104,9 @@ namespace rotator
         corrupted_cmd_count++;
         if (corrupted_cmd_count > MAX_CORRUPTED_CMD || ret_sz <= 0)
         {
-            if (client != nullptr)
-                delete client;
-            client = nullptr;
+            // if (client != nullptr)
+            //     delete client;
+            // client = nullptr;
             corrupted_cmd_count = 0;
         }
 
@@ -135,9 +135,9 @@ namespace rotator
         corrupted_cmd_count++;
         if (corrupted_cmd_count > MAX_CORRUPTED_CMD || ret_sz <= 0)
         {
-            if (client != nullptr)
-                delete client;
-            client = nullptr;
+            // if (client != nullptr)
+            //     delete client;
+            // client = nullptr;
             corrupted_cmd_count = 0;
         }
 
