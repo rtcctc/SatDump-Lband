@@ -149,20 +149,23 @@ AutoTrackApp::AutoTrackApp(nlohmann::json settings, nlohmann::json parameters, s
     ///////////////////////////////////////////////////////////////////////////////////
 
     rotator_handler = std::make_shared<rotator::RotctlHandler>();
+    std::string protocol_name = "rotstl";
 
     if (settings["tracking"].contains("rotator_type"))
     {
         auto options = rotator::getRotatorHandlerOptions();
         for (auto &opt : options)
-            if (opt.name == settings["tracking"]["rotator_type"].get<std::string>())
+            if (opt.name == settings["tracking"]["rotator_type"].get<std::string>()) {
                 rotator_handler = opt.construct();
+                protocol_name = opt.name;
+            }
     }
 
     if (rotator_handler)
     {
         try
         {
-            rotator_handler->set_settings(settings["tracking"]["rotator_cfg"]);
+            rotator_handler->set_settings(settings["tracking"]["rotator_config"][protocol_name]);
         }
         catch (std::exception &)
         {

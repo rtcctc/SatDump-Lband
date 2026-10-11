@@ -1,0 +1,30 @@
+{
+  "beacon_cn": {
+    "name": "Beacon C/N Monitor",
+    "live": true,
+    "live_cfg": [
+      [1, 0]
+    ],
+    "frequencies": [],
+    "parameters": {
+      "samplerate": {
+        "value": 3000000
+      },
+      "fft_size": {
+        "type": "int",
+        "value": 1024,
+        "name": "FFT Size",
+        "description": "FFT size for C/N estimation. Larger = finer frequency\nresolution but more CPU load. 1024 works well for narrow carriers."
+      }
+    },
+    "work": {
+      "baseband": {},
+      "soft": {
+        "beacon_cn": {
+          "fft_size": 1024,
+          "symbolrate": 3000000
+        }
+      }
+    }
+  }
+}

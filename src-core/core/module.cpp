@@ -3,6 +3,8 @@
 #include "logger.h"
 #include "plugin.h"
 
+#include "modules/demod/module_beacon_cn.h"
+
 ProcessingModule::ProcessingModule(std::string input_file, std::string output_file_hint, nlohmann::json parameters) : d_input_file(input_file),
                                                                                                                       d_output_file_hint(output_file_hint),
                                                                                                                       d_parameters(parameters)
@@ -85,6 +87,7 @@ void registerModules()
     REGISTER_MODULE(demod::PSKDemodModule);
     REGISTER_MODULE(demod::SDPSKDemodModule);
     REGISTER_MODULE(demod::XFSKBurstDemodModule);
+    REGISTER_MODULE(demod::BeaconCNModule);
 
     // Network
     REGISTER_MODULE(network::NetworkServerModule);

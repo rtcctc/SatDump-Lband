@@ -27,7 +27,13 @@ find_package(PkgConfig)
 
 add_library(satdump_core SHARED ${SatDump_core_CPPS}
         common/tracking/rotator/rotctl_serial_handler.cpp
-        common/tracking/rotator/rotctl_serial_handler.h)
+        common/tracking/rotator/rotctl_serial_handler.h
+        common/dsp/utils/cn_estimator.cpp
+        common/dsp/utils/cn_estimator.h
+        modules/demod/module_beacon_cn.cpp
+        modules/demod/module_beacon_cn.h
+        common/widgets/cn_plot.cpp
+        common/widgets/cn_plot.h)
 target_include_directories(satdump_core PUBLIC .)
 
 # Set the resources path
