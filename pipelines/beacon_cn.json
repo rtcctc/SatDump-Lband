@@ -15,6 +15,18 @@
         "value": 1024,
         "name": "FFT Size",
         "description": "FFT size for C/N estimation. Larger = finer frequency\nresolution but more CPU load. 1024 works well for narrow carriers."
+      },
+      "serial_port": {
+        "type": "string",
+        "value": "/dev/ttyUSB0",
+        "name": "Gyro Serial Port",
+        "description": "Serial port for gyro telemetry (AZ/EL)."
+      },
+      "serial_baud": {
+        "type": "int",
+        "value": 115200,
+        "name": "Gyro Baudrate",
+        "description": "Baudrate for the gyro serial port."
       }
     },
     "work": {
@@ -22,7 +34,9 @@
       "soft": {
         "beacon_cn": {
           "fft_size": 1024,
-          "symbolrate": 3000000
+          "symbolrate": 3000000,
+          "serial_port": "/dev/ttyUSB0",
+          "serial_baud": 115200
         }
       }
     }

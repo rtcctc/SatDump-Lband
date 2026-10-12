@@ -33,7 +33,11 @@ add_library(satdump_core SHARED ${SatDump_core_CPPS}
         modules/demod/module_beacon_cn.cpp
         modules/demod/module_beacon_cn.h
         common/widgets/cn_plot.cpp
-        common/widgets/cn_plot.h)
+        common/widgets/cn_plot.h
+        common/dsp/utils/gyro_serial.cpp
+        common/dsp/utils/gyro_serial.h
+        common/widgets/attitude_plot.cpp
+        common/widgets/attitude_plot.h)
 target_include_directories(satdump_core PUBLIC .)
 
 # Set the resources path
