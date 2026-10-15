@@ -133,39 +133,23 @@ namespace metop
 
     void MetOpAHRPTDecoderModule::drawUI(bool window)
     {
-        ImGui::Begin("MetOp AHRPT Decoder", NULL, window ? 0 : NOWINDOW_FLAGS);
+        if (!embed_in_parent)
+            ImGui::Begin("MetOp AHRPT Decoder", NULL, window ? 0 : NOWINDOW_FLAGS);
+        else
+        {
+            ImGui::NewLine();
+            ImGui::Dummy(ImVec2((demod_constellation_size + 200) * ui_scale + 9, 0.0f));
+            ImGui::SameLine();
+        }
 
         float ber = viterbi.ber();
 
         ImGui::BeginGroup();
         {
-            // Constellation
-            {
-                ImDrawList *draw_list = ImGui::GetWindowDrawList();
-                ImVec2 rect_min = ImGui::GetCursorScreenPos();
-                ImVec2 rect_max = { rect_min.x + 200 * ui_scale, rect_min.y + 200 * ui_scale };
-                draw_list->AddRectFilled(rect_min, rect_max, style::theme.widget_bg);
-                draw_list->PushClipRect(rect_min, rect_max);
+            if (embed_in_parent)
+                ImGui::Dummy(ImVec2(0.0f, 7 * ui_scale));
 
-                for (int i = 0; i < 2048; i++)
-                {
-                    draw_list->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + (int)(100 * ui_scale + (((int8_t *)soft_buffer)[i * 2 + 0] / 127.0) * 100 * ui_scale) % int(200 * ui_scale),
-                                                      ImGui::GetCursorScreenPos().y + (int)(100 * ui_scale + (((int8_t *)soft_buffer)[i * 2 + 1] / 127.0) * 100 * ui_scale) % int(200 * ui_scale)),
-                                               2 * ui_scale,
-                                               style::theme.constellation);
-                }
-
-                draw_list->PopClipRect();
-                ImGui::Dummy(ImVec2(200 * ui_scale + 3, 200 * ui_scale + 3));
-            }
-        }
-        ImGui::EndGroup();
-
-        ImGui::SameLine();
-
-        ImGui::BeginGroup();
-        {
-            ImGui::Button("Viterbi", {200 * ui_scale, 20 * ui_scale});
+            ImGui::Button("Viterbi", {160 * ui_scale, 20 * ui_scale});
             {
                 ImGui::Text("State : ");
 
@@ -180,16 +164,16 @@ namespace metop
                 ImGui::SameLine();
                 ImGui::TextColored(viterbi.getState() == 0 ? style::theme.red : style::theme.green, UITO_C_STR(ber));
 
-                std::memmove(&ber_history[0], &ber_history[1], (200 - 1) * sizeof(float));
-                ber_history[200 - 1] = ber;
+                std::memmove(&ber_history[0], &ber_history[1], (160 - 1) * sizeof(float));
+                ber_history[160 - 1] = ber;
 
                 widgets::ThemedPlotLines(style::theme.plot_bg.Value, "", ber_history, IM_ARRAYSIZE(ber_history), 0, "", 0.0f, 1.0f,
-                                         ImVec2(200 * ui_scale, 50 * ui_scale));
+                                         ImVec2(160 * ui_scale, 50 * ui_scale));
             }
 
             ImGui::Spacing();
 
-            ImGui::Button("Deframer", {200 * ui_scale, 20 * ui_scale});
+            ImGui::Button("Deframer", {160 * ui_scale, 20 * ui_scale});
             {
                 ImGui::Text("State : ");
 
@@ -212,7 +196,7 @@ namespace metop
 
             ImGui::Spacing();
 
-            ImGui::Button("Reed-Solomon", {200 * ui_scale, 20 * ui_scale});
+            ImGui::Button("Reed-Solomon", {160 * ui_scale, 20 * ui_scale});
             {
                 ImGui::Text("RS    : ");
                 for (int i = 0; i < 4; i++)
@@ -240,7 +224,8 @@ namespace metop
         if (!streamingInput)
             ImGui::ProgressBar((double)progress / (double)filesize, ImVec2(ImGui::GetContentRegionAvail().x, 20 * ui_scale));
 
-        ImGui::End();
+        if (!embed_in_parent)
+            ImGui::End();
     }
 
     std::string MetOpAHRPTDecoderModule::getID()

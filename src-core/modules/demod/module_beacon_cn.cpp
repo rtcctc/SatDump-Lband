@@ -68,16 +68,30 @@ namespace demod
             {
                 d_cn = cn_estimator->cn();
 
-                if (d_cn > d_peak_cn + 2.0f)
+                if (d_cn_cnt > 0)
                 {
-                    d_peak_cn = d_cn;
-                    gyro.send_reset();
-                    logger->info("New C/N peak %.2f dB, gyro reset", d_cn);
+                    float avg = d_cn_sum / d_cn_cnt;
+                    if (d_cn > avg + 2.0f)
+                    {
+                        gyro.send_reset();
+                        logger->info("C/N %.2f dB > avg %.2f + 2 dB, gyro reset", d_cn, avg);
+
+                        d_cn_cnt = 0;
+                        d_cn_sum = 0.0f;
+                        d_cn_idx = 0;
+                    }
                 }
-                else if (d_cn > d_peak_cn)
-                {
+
+                if (d_cn_cnt == CN_WIN)
+                    d_cn_sum -= d_cn_win[d_cn_idx];
+                else
+                    d_cn_cnt++;
+                d_cn_win[d_cn_idx] = d_cn;
+                d_cn_sum += d_cn;
+                d_cn_idx = (d_cn_idx + 1) % CN_WIN;
+
+                if (d_cn > d_peak_cn)
                     d_peak_cn = d_cn;
-                }
 
                 update_counter++;
                 d_avg_cn += (d_cn - d_avg_cn) / update_counter;

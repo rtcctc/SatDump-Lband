@@ -263,6 +263,9 @@ namespace demod
 
     void BaseDemodModule::drawUI(bool window)
     {
+        ImGui::SetNextWindowSizeConstraints(
+            ImVec2(/* min_x */ 600 * ui_scale, /* min_y */ 200 * ui_scale),
+            ImVec2(FLT_MAX, FLT_MAX));
         ImGui::Begin(name.c_str(), NULL, window ? 0 : NOWINDOW_FLAGS);
 
         ImGui::BeginGroup();

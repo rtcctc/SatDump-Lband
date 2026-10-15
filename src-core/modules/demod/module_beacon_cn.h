@@ -10,12 +10,13 @@ namespace demod
 {
     class BeaconCNModule : public BaseDemodModule
     {
+
     private:
         std::shared_ptr<dsp::CNEstimator> cn_estimator;
         dsp::GyroSerial gyro;
 
         int d_fft_size = 1024;
-        std::string d_serial_port = "/dev/ttyUSB0";
+        std::string d_serial_port = "/dev/ttyACM0";
         int d_serial_baud = 115200;
 
         widgets::CNPlotViewer cn_plot;
@@ -25,6 +26,12 @@ namespace demod
         float d_peak_cn = -100.0f;
         float d_avg_cn = 0.0f;
         int update_counter = 0;
+
+        static constexpr int CN_WIN = 150;
+        float d_cn_win[CN_WIN] = {0.0f};
+        float d_cn_sum = 0.0f;
+        int   d_cn_idx = 0;
+        int   d_cn_cnt = 0;
 
         // Гироскоп
         float d_gyro_pitch = 0.0f;

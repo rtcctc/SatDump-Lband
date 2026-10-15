@@ -2,16 +2,18 @@
 #include "logger.h"
 #include "common/codings/manchester.h"
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 
-// Return filesize
+
 uint64_t getFilesize(std::string filepath);
 
 #define BUFFER_SIZE 8192
 
 namespace meteor
 {
-    METEORHRPTDecoderModule::METEORHRPTDecoderModule(std::string input_file, std::string output_file_hint, nlohmann::json parameters) : ProcessingModule(input_file, output_file_hint, parameters),
-                                                                                                                                        constellation(1.0, 0.15, demod_constellation_size)
+    METEORHRPTDecoderModule::METEORHRPTDecoderModule(std::string input_file, std::string output_file_hint, nlohmann::json parameters)
+        : ProcessingModule(input_file, output_file_hint, parameters),
+          constellation(1.0, 0.15, demod_constellation_size)
     {
         def = std::make_shared<CADUDeframer>();
 
@@ -39,8 +41,10 @@ namespace meteor
             filesize = getFilesize(d_input_file);
         else
             filesize = 0;
+
         if (input_data_type == DATA_FILE)
             data_in = std::ifstream(d_input_file, std::ios::binary);
+
         data_out = std::ofstream(d_output_file_hint + ".cadu", std::ios::binary);
         d_output_files.push_back(d_output_file_hint + ".cadu");
 
@@ -48,12 +52,10 @@ namespace meteor
         logger->info("Decoding to " + d_output_file_hint + ".cadu");
 
         time_t lastTime = 0;
-
         int frame_count = 0;
 
         while (input_data_type == DATA_FILE ? !data_in.eof() : input_active.load())
         {
-            // Read a buffer
             if (input_data_type == DATA_FILE)
                 data_in.read((char *)soft_buffer, BUFFER_SIZE);
             else
@@ -61,10 +63,8 @@ namespace meteor
 
             std::vector<std::array<uint8_t, CADU_SIZE>> frames = def->work(soft_buffer, BUFFER_SIZE);
 
-            // Count frames
             frame_count += frames.size();
 
-            // Write to file
             if (frames.size() > 0)
             {
                 for (std::array<uint8_t, CADU_SIZE> frm : frames)
@@ -95,22 +95,23 @@ namespace meteor
 
     void METEORHRPTDecoderModule::drawUI(bool window)
     {
-        ImGui::Begin("METEOR HRPT Decoder", NULL, window ? 0 : NOWINDOW_FLAGS);
-
-        // Constellation
-        ImGui::BeginGroup();
-        constellation.pushSofttAndGaussian(soft_buffer, 127, BUFFER_SIZE);
-        constellation.draw();
-        ImGui::EndGroup();
-
-        ImGui::SameLine();
+        if (!embed_in_parent)
+            ImGui::Begin("METEOR HRPT Decoder", NULL, window ? 0 : NOWINDOW_FLAGS);
+        else
+        {
+            ImGui::NewLine();
+            ImGui::Dummy(ImVec2((demod_constellation_size + 200) * ui_scale + 9, 0.0f));
+            ImGui::SameLine();
+        }
 
         ImGui::BeginGroup();
         {
-            ImGui::Button("Deframer", {200 * ui_scale, 20 * ui_scale});
+            if (embed_in_parent)
+                ImGui::Dummy(ImVec2(0.0f, 7 * ui_scale));
+
+            ImGui::Button("Deframer", {160 * ui_scale, 20 * ui_scale});
             {
                 ImGui::Text("State : ");
-
                 ImGui::SameLine();
 
                 if (def->getState() == 0)
@@ -124,9 +125,11 @@ namespace meteor
         ImGui::EndGroup();
 
         if (!streamingInput)
-            ImGui::ProgressBar((double)progress / (double)filesize, ImVec2(ImGui::GetContentRegionAvail().x, 20 * ui_scale));
+            ImGui::ProgressBar((double)progress / (double)filesize,
+                               ImVec2(ImGui::GetContentRegionAvail().x, 20 * ui_scale));
 
-        ImGui::End();
+        if (!embed_in_parent)
+            ImGui::End();
     }
 
     std::string METEORHRPTDecoderModule::getID()
@@ -143,4 +146,4 @@ namespace meteor
     {
         return std::make_shared<METEORHRPTDecoderModule>(input_file, output_file_hint, parameters);
     }
-} // namespace meteor
+}

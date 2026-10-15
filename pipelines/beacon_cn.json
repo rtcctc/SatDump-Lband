@@ -18,7 +18,7 @@
       },
       "serial_port": {
         "type": "string",
-        "value": "/dev/ttyUSB0",
+        "value": "/dev/ttyACM0",
         "name": "Gyro Serial Port",
         "description": "Serial port for gyro telemetry (AZ/EL)."
       },
@@ -35,7 +35,7 @@
         "beacon_cn": {
           "fft_size": 1024,
           "symbolrate": 3000000,
-          "serial_port": "/dev/ttyUSB0",
+          "serial_port": "/dev/ttyACM0",
           "serial_baud": 115200
         }
       }
